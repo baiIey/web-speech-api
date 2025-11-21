@@ -1,0 +1,316 @@
+@font-face {
+	font-family: "Roboto";
+	src: url("fonts/Roboto-Regular.ttf") format("truetype");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Roboto";
+	src: url("fonts/Roboto-Medium.ttf") format("truetype");
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Roboto";
+	src: url("fonts/Roboto-SemiBold.ttf") format("truetype");
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+:root {
+	/* iPhone 16 Pro-ish artboard; scale now 1:1 with design pixels */
+	--device-width: 402px;
+	--device-height: 874px;
+	--animation-duration: 0.5s;
+	--scale: 1;
+	--frame-padding: clamp(18px, 4vw, 56px);
+	--fit-scale: 1;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #fff;
+	font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	color: #000;
+	overflow: hidden;
+}
+
+.app {
+	min-height: 100vh;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--frame-padding);
+	--fit-scale: min(
+		1,
+		(calc(100vw - (var(--frame-padding) * 2)) / var(--device-width)),
+		(calc(100vh - (var(--frame-padding) * 2)) / var(--device-height))
+	);
+}
+
+.device {
+	position: relative;
+	width: var(--device-width);
+	height: var(--device-height);
+	max-width: var(--device-width);
+	max-height: var(--device-height);
+	overflow: hidden;
+	background: #f5f5f5;
+	box-shadow:
+		0 4px 6px -1px rgba(0, 0, 0, 0.12),
+		0 2px 4px -2px rgba(0, 0, 0, 0.1);
+	border-radius: 0;
+	--logo-delay: 0s;
+	--text-delay: 0s;
+	--dots-delay: 0s;
+	--footer-delay: 0s;
+	--halo-scale: 0;
+	--logo-shift: 0px;
+	--dots-shift: 0px;
+	transform: scale(var(--fit-scale));
+	transform-origin: center top;
+}
+
+.layer {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+.bg {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	z-index: 1;
+}
+
+.google-logo {
+	position: absolute;
+	top: calc(216px * var(--scale));
+	left: 50%;
+	transform: translate(-50%, var(--logo-shift));
+	width: calc(112px * var(--scale));
+	height: auto;
+	transition:
+		transform var(--animation-duration) ease var(--logo-delay),
+		opacity var(--animation-duration) ease var(--logo-delay);
+	will-change: transform, opacity;
+}
+
+.g-dots {
+	position: absolute;
+	top: calc(266px * var(--scale));
+	left: 50%;
+	transform: translate(-50%, var(--dots-shift));
+	opacity: 0;
+	background: #fff;
+	border-radius: 999px;
+	z-index: 6;
+	transition:
+		opacity var(--animation-duration) ease var(--dots-delay),
+		transform var(--animation-duration) ease var(--dots-delay);
+	will-change: opacity, transform;
+}
+
+.g-dots img {
+	display: block;
+	width: calc(126px * var(--scale));
+	height: auto;
+}
+
+.g-dots.speech img {
+	width: calc(117px * var(--scale));
+}
+
+.g-dots#gDotSpeech {
+	top: calc(455px * var(--scale));
+	background: transparent;
+	transform: translateX(-50%);
+	opacity: 0;
+	z-index: 7;
+}
+
+.transcript {
+	pointer-events: none;
+	padding: calc(42px * var(--scale)) calc(17px * var(--scale)) 0 calc(21px * var(--scale));
+	z-index: 8;
+}
+
+.transcript-text {
+	color: #969696;
+	font-weight: 300;
+	font-size: calc(19px * var(--scale));
+	line-height: calc(22px * var(--scale));
+	max-width: calc(126px * var(--scale));
+	opacity: 0;
+	transition: opacity 0.1s ease var(--text-delay);
+}
+
+.mic-area {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: auto;
+	z-index: 5;
+	transition:
+		opacity var(--animation-duration) ease,
+		transform var(--animation-duration) ease;
+}
+
+.mic-button {
+	transition:
+		opacity var(--animation-duration) ease,
+		transform var(--animation-duration) ease;
+}
+
+.mic-bg {
+	position: absolute;
+	bottom: calc(210px * var(--scale));
+	width: calc(49px * var(--scale));
+	height: calc(49px * var(--scale));
+	border-radius: 50%;
+	background: #fff;
+	transform: scale(var(--halo-scale));
+	transform-origin: center;
+	transition:
+		transform var(--animation-duration) ease,
+		opacity var(--animation-duration) ease;
+}
+
+.mic-button {
+	position: absolute;
+	bottom: calc(210px * var(--scale));
+	width: calc(49px * var(--scale));
+	height: calc(49px * var(--scale));
+	border: none;
+	border-radius: 50%;
+	background: transparent;
+	cursor: pointer;
+	pointer-events: auto;
+}
+
+.mic-button:disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+
+.mic-button img {
+	width: calc(49px * var(--scale));
+	height: calc(50px * var(--scale));
+	pointer-events: none;
+}
+
+.footer-btn {
+	position: absolute;
+	bottom: calc(25px * var(--scale));
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	pointer-events: none;
+	opacity: 0;
+	transition:
+		transform var(--animation-duration) ease var(--footer-delay),
+		opacity var(--animation-duration) ease var(--footer-delay);
+	will-change: transform, opacity;
+	transform: translateY(calc(160px * var(--scale)));
+	z-index: 8;
+}
+
+.footer-btn img {
+	width: calc(15px * var(--scale));
+	height: auto;
+	display: block;
+}
+
+.footer-btn.close {
+	left: calc(25px * var(--scale));
+}
+
+.footer-btn.web {
+	right: calc(25px * var(--scale));
+	bottom: calc(21px * var(--scale));
+}
+
+.footer-btn.web img {
+	width: calc(20px * var(--scale));
+}
+	
+.footer-btn.close img {
+	width: calc(15px * var(--scale));
+}
+
+.google-area {
+	z-index: 6;
+}
+
+.g-dots {
+	z-index: 7;
+}
+
+.device.listening {
+	--logo-delay: 0.18s;
+	--text-delay: 0.2s;
+	--dots-delay: 0.2s;
+	--footer-delay: 0.22s;
+	--halo-scale: 19;
+	--logo-shift: calc(263px * var(--scale));
+	--dots-shift: calc(263px * var(--scale));
+}
+
+.device.listening .google-logo {
+	opacity: 0;
+}
+
+.device.listening .transcript-text {
+	opacity: 1;
+}
+
+.device.listening #gDots {
+	opacity: 1;
+	transform: translate(-50%, var(--dots-shift));
+}
+
+.device.listening #gDotSpeech {
+	opacity: 0;
+}
+
+.device.listening.speaking #gDots {
+	opacity: 0;
+}
+
+.device.listening.speaking #gDotSpeech {
+	opacity: 1;
+}
+
+.device.listening .footer-btn {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+
+.device.listening .mic-area {
+	pointer-events: none;
+}
+
+.device.listening .mic-button {
+	opacity: 0;
+	transform: translateY(calc(140px * var(--scale))) scale(0.05);
+}
+
+.device.listening .mic-bg {
+	opacity: 1;
+}

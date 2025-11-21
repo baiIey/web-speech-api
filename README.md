@@ -45,13 +45,15 @@ This will now show the prototype in the current working directory.
 
 ### Motion port
 
-The `speech-recognition-motion/` directory contains a Motion-powered rebuild that mirrors the Framer prototype, including assets and interactions. Run it with any static server (Chrome 33+ is still required for the Web Speech API):
+The `speech-recognition/` directory contains a Motion-powered rebuild that mirrors the Framer prototype, including assets and interactions. Run it with any static server (Chrome 33+ is still required for the Web Speech API):
 
 ```
-cd speech-recognition-motion
+cd speech-recognition
 python3 -m http.server 8090
 # Visit http://127.0.0.1:8090 in Chrome and allow microphone access.
 ```
+
+An updated artboard variant for iOS 26 (402×874) lives in `speech-recognition-ios26/` (currently pointed at the original assets in `images-old/` until new artwork is added).
 
 
 ### SpeechRecognition Interface

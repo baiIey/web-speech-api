@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Speech Recognition · Motion</title>
+		<link rel="stylesheet" href="style.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="preload" href="fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin />
+		<link rel="preload" href="fonts/Roboto-Medium.ttf" as="font" type="font/ttf" crossorigin />
+		<link rel="preload" href="fonts/Roboto-SemiBold.ttf" as="font" type="font/ttf" crossorigin />
+	</head>
+	<body>
+		<div class="app">
+			<div class="device" id="device">
+				<img class="layer bg" src="images-old/okGoogle@2x.png" alt="" />
+
+				<div class="layer google-area">
+					<img class="google-logo" id="googleLogo" src="images-old/googleImg@2x.png" alt="Google" />
+					<div class="g-dots" id="gDots">
+						<img src="images-old/g-dots-360-1.gif" alt="Listening animation" />
+					</div>
+					<div class="g-dots speech" id="gDotSpeech">
+						<img src="images-old/gDotSpeech.gif" alt="Speech animation" />
+					</div>
+				</div>
+
+				<div class="layer transcript">
+					<div class="transcript-text" id="textBox">Speak now</div>
+				</div>
+
+				<div class="layer mic-area">
+					<div class="mic-bg" id="micHalo" aria-hidden="true"></div>
+					<button class="mic-button" id="micButton" aria-label="Start listening">
+						<img id="micImage" src="images-old/mic@2x.png" alt="" />
+					</button>
+				</div>
+
+				<button class="footer-btn close" id="closeButton" aria-label="Close">
+					<img src="images-old/closeIcon@2x.png" alt="" />
+				</button>
+
+				<button class="footer-btn web" id="webButton" aria-label="Search the web">
+					<img src="images-old/webIcon@2x.png" alt="" />
+				</button>
+			</div>
+		</div>
+
+		<script type="module" src="app.js"></script>
+	</body>
+</html>
