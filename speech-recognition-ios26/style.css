@@ -36,7 +36,7 @@
 	--device-bg-color: #f5f5f5;
 	--card-bg-color: #fff;
 	--text-color: #000;
-	--muted-text-color: #969696;
+	--muted-text-color: #707173;
 	--halo-color: #fff;
 }
 
@@ -266,7 +266,7 @@ body {
 }
 
 .header-btn img {
-	width: calc(15px * var(--scale));
+	width: calc(25px * var(--scale));
 	height: auto;
 	display: block;
 }
@@ -278,14 +278,6 @@ body {
 .header-btn.web {
 	right: calc(25px * var(--scale));
 	top: calc(60px * var(--scale));
-}
-
-.header-btn.web img {
-	width: calc(20px * var(--scale));
-}
-	
-.header-btn.close img {
-	width: calc(15px * var(--scale));
 }
 
 .google-area {
