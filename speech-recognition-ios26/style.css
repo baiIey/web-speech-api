@@ -188,6 +188,27 @@ body {
 	text-align: center;
 }
 
+
+.search-song {
+	position: absolute;
+	inset: auto;
+	left: 50%;
+	bottom: calc(20% * var(--scale));
+	transform: translate(-50%, 0);
+	opacity: 0;
+	z-index: 6;
+	pointer-events: none;
+	transition:
+		opacity var(--animation-duration) ease var(--header-delay),
+		transform var(--animation-duration) ease var(--header-delay);
+}
+
+.search-song img {
+	display: block;
+	width: calc(160px * var(--scale));
+	height: auto;
+}
+
 @media (prefers-color-scheme: dark) {
 	:root {
 		color-scheme: light dark;
@@ -339,4 +360,9 @@ body {
 
 .device.listening .mic-bg {
 	opacity: 1;
+}
+
+.device.listening .search-song {
+	opacity: 1;
+	transform: translate(-50%, 0);
 }
