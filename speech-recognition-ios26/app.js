@@ -14,10 +14,12 @@ let shouldListen = false;
 let restartCount = 0;
 let lastRestart = 0;
 let watchdogTimeout;
+let promptSwapTimeout;
 const MAX_RESTARTS_BEFORE_REBUILD = 20;
 const MIN_RESTART_GAP = 2000; // ms
 const WATCHDOG_MS = 8000;
 const INACTIVITY_REFRESH_MS = 12000;
+const PROMPT_SWAP_MS = 1200;
 
 function createRecognizer() {
 	const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -52,6 +54,24 @@ function scheduleTranscriptReset(delay = 0) {
 		textBox.textContent = "Speak now";
 		resetTranscriptTimeout = null;
 	}, delay);
+}
+
+function clearPromptSwap() {
+	if (!promptSwapTimeout) return;
+	window.clearTimeout(promptSwapTimeout);
+	promptSwapTimeout = null;
+}
+
+function schedulePromptSwap() {
+	clearPromptSwap();
+	promptSwapTimeout = window.setTimeout(() => {
+		if (!isRecognizing || !shouldListen) return;
+		// Only swap if we haven't started speaking yet
+		if (!device.classList.contains("speaking")) {
+			setTranscript("Start talking...");
+		}
+		promptSwapTimeout = null;
+	}, PROMPT_SWAP_MS);
 }
 
 function clearInactivityRefresh() {
@@ -112,6 +132,7 @@ function startListening() {
 	shouldListen = true;
 	toListening();
 	restartRecognizer("Speak now");
+	schedulePromptSwap();
 }
 
 function stopListening() {
@@ -119,6 +140,7 @@ function stopListening() {
 	if (recognizer) {
 		recognizer.stop();
 	}
+	clearPromptSwap();
 	clearInactivityRefresh();
 	toggleSpeechAnimation(false);
 	toIdle();
@@ -135,25 +157,26 @@ function restartRecognizer(message) {
 		return;
 	}
 	lastRestart = now;
-	try {
-		currentTranscript = "";
-		if (message) {
-			setTranscript(message);
-		} else {
-			setTranscript("Speak now");
+		try {
+			currentTranscript = "";
+			if (message) {
+				setTranscript(message);
+			} else {
+				setTranscript("Speak now");
+			}
+			isRecognizing = true;
+			recognizer.start();
+			restartCount += 1;
+			scheduleInactivityRefresh(INACTIVITY_REFRESH_MS);
+			scheduleWatchdog();
+			schedulePromptSwap();
+			if (restartCount >= MAX_RESTARTS_BEFORE_REBUILD) {
+				rebuildRecognizer();
+			}
+		} catch (err) {
+			console.warn("Speech start failed", err);
+			isRecognizing = false;
 		}
-		isRecognizing = true;
-		recognizer.start();
-		restartCount += 1;
-		scheduleInactivityRefresh(INACTIVITY_REFRESH_MS);
-		scheduleWatchdog();
-		if (restartCount >= MAX_RESTARTS_BEFORE_REBUILD) {
-			rebuildRecognizer();
-		}
-	} catch (err) {
-		console.warn("Speech start failed", err);
-		isRecognizing = false;
-	}
 }
 
 function rebuildRecognizer() {
@@ -205,12 +228,14 @@ function attachRecognizerHandlers() {
 		setTranscript(transcript || "Speak now");
 		scheduleInactivityRefresh();
 		clearWatchdog();
+		clearPromptSwap();
 		if (isRecognizing) scheduleWatchdog();
 	};
 
 	recognizer.onspeechstart = () => {
 		toggleSpeechAnimation(true);
 		clearWatchdog();
+		clearPromptSwap();
 	};
 	recognizer.onspeechend = () => {
 		toggleSpeechAnimation(false);

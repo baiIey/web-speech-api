@@ -8,6 +8,17 @@
 
 @font-face {
 	font-family: "Roboto";
+	src:
+		local("Roboto Light"),
+		local("Roboto-Light"),
+		url("https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmSU5fBBc4.woff2") format("woff2");
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "Roboto";
 	src: url("fonts/Roboto-Medium.ttf") format("truetype");
 	font-weight: 500;
 	font-style: normal;
@@ -36,7 +47,7 @@
 	--device-bg-color: #f5f5f5;
 	--card-bg-color: #fff;
 	--text-color: #000;
-	--muted-text-color: #707173;
+	--muted-text-color: #3C4043;
 	--halo-color: #fff;
 }
 
@@ -177,13 +188,13 @@ body {
 }
 
 .transcript-text {
-	color: var(--muted-text-color);
-	font-weight: 300;
-	font-size: calc(19px * var(--scale));
-	line-height: calc(22px * var(--scale));
+	color: #3C4043;
+	font-weight: 400;
+	font-size: calc(22px * var(--scale));
+	line-height: calc(28px * var(--scale));
 	opacity: 0;
 	position: absolute;
-	top: 25%;
+	top: 30%;
 	transition: opacity 0.1s ease var(--text-delay);
 	text-align: center;
 }
@@ -193,7 +204,7 @@ body {
 	position: absolute;
 	inset: auto;
 	left: 50%;
-	bottom: calc(20% * var(--scale));
+	bottom: 30%;
 	transform: translate(-50%, 0);
 	opacity: 0;
 	z-index: 6;
@@ -272,7 +283,7 @@ body {
 
 .header-btn {
 	position: absolute;
-	top: calc(60px * var(--scale));
+	top: calc(54px * var(--scale));
 	border: none;
 	background: transparent;
 	cursor: pointer;
@@ -282,12 +293,11 @@ body {
 		transform var(--animation-duration) ease var(--header-delay),
 		opacity var(--animation-duration) ease var(--header-delay);
 	will-change: transform, opacity;
-	transform: translateY(calc(-160px * var(--scale)));
 	z-index: 8;
 }
 
 .header-btn img {
-	width: calc(25px * var(--scale));
+	width: 25px;
 	height: auto;
 	display: block;
 }
@@ -298,7 +308,6 @@ body {
 
 .header-btn.web {
 	right: calc(25px * var(--scale));
-	top: calc(60px * var(--scale));
 }
 
 .google-area {
