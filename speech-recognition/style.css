@@ -76,9 +76,9 @@ body {
 	--logo-delay: 0s;
 	--text-delay: 0s;
 	--dots-delay: 0s;
-	--footer-delay: 0s;
+	--header-delay: 0s;
 	--halo-scale: 0;
-	--logo-shift: 0px;
+	--logo-shift: calc(-50% + 442px * var(--scale));
 	--dots-shift: 0px;
 	transform: scale(var(--fit-scale));
 	transform-origin: center top;
@@ -99,9 +99,9 @@ body {
 
 .google-logo {
 	position: absolute;
-	top: calc(442px * var(--scale));
+	top: 50%;
 	left: 50%;
-	transform: translate(-50%, var(--logo-shift));
+	transform: translate(-50%, calc(-50% + var(--logo-shift)));
 	width: calc(318px * var(--scale));
 	height: auto;
 	transition:
@@ -112,9 +112,9 @@ body {
 
 .g-dots {
 	position: absolute;
-	top: calc(540px * var(--scale));
+	top: 50%;
 	left: 50%;
-	transform: translate(-50%, var(--dots-shift));
+	transform: translate(-50%, calc(-50% + var(--dots-shift)));
 	opacity: 0;
 	background: #fff;
 	border-radius: 999px;
@@ -136,9 +136,10 @@ body {
 }
 
 .g-dots#gDotSpeech {
-	top: calc(950px * var(--scale));
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, calc(-50% + var(--dots-shift)));
 	background: transparent;
-	transform: translateX(-50%);
 	opacity: 0;
 	z-index: 7;
 }
@@ -213,42 +214,42 @@ body {
 	pointer-events: none;
 }
 
-.footer-btn {
+.header-btn {
 	position: absolute;
-	bottom: calc(50px * var(--scale));
+	top: calc(60px * var(--scale));
 	border: none;
 	background: transparent;
 	cursor: pointer;
 	pointer-events: none;
 	opacity: 0;
 	transition:
-		transform var(--animation-duration) ease var(--footer-delay),
-		opacity var(--animation-duration) ease var(--footer-delay);
+		transform var(--animation-duration) ease var(--header-delay),
+		opacity var(--animation-duration) ease var(--header-delay);
 	will-change: transform, opacity;
-	transform: translateY(calc(160px * var(--scale)));
+	transform: translateY(calc(-160px * var(--scale)));
 	z-index: 8;
 }
 
-.footer-btn img {
+.header-btn img {
 	width: calc(44px * var(--scale));
 	height: auto;
 	display: block;
 }
 
-.footer-btn.close {
+.header-btn.close {
 	left: calc(55px * var(--scale));
 }
 
-.footer-btn.web {
+.header-btn.web {
 	right: calc(50px * var(--scale));
-	bottom: calc(43px * var(--scale));
+	top: calc(60px * var(--scale));
 }
 
-.footer-btn.web img {
+.header-btn.web img {
 	width: calc(56px * var(--scale));
 }
 	
-.footer-btn.close img {
+.header-btn.close img {
 	width: calc(44px * var(--scale));
 }
 
@@ -264,10 +265,10 @@ body {
 	--logo-delay: 0.18s;
 	--text-delay: 0.2s;
 	--dots-delay: 0.2s;
-	--footer-delay: 0.22s;
+	--header-delay: 0.22s;
 	--halo-scale: 17;
-	--logo-shift: calc(558px * var(--scale));
-	--dots-shift: calc(558px * var(--scale));
+	--logo-shift: 0px;
+	--dots-shift: 0px;
 }
 
 .device.listening .google-logo {
@@ -280,7 +281,6 @@ body {
 
 .device.listening #gDots {
 	opacity: 1;
-	transform: translate(-50%, var(--dots-shift));
 }
 
 .device.listening #gDotSpeech {
@@ -295,7 +295,7 @@ body {
 	opacity: 1;
 }
 
-.device.listening .footer-btn {
+.device.listening .header-btn {
 	opacity: 1;
 	transform: translateY(0);
 	pointer-events: auto;

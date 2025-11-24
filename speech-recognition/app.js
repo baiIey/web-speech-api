@@ -37,8 +37,11 @@ if (SpeechRecognition) {
 	recognizer.onend = () => {
 		isRecognizing = false;
 		toggleSpeechAnimation(false);
-		toIdle();
-		if (!currentTranscript) scheduleTranscriptReset(0);
+		if (!currentTranscript) {
+			scheduleTranscriptReset(0);
+		} else {
+			scheduleTranscriptReset(2000);
+		}
 	};
 } else {
 	setTranscript("SpeechRecognition unavailable in this browser.");

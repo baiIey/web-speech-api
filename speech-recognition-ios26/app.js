@@ -9,6 +9,8 @@ let currentTranscript = "";
 let recognizer;
 let resetTranscriptTimeout;
 let isRecognizing = false;
+let inactivityTimeout;
+let shouldListen = false;
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (SpeechRecognition) {
@@ -22,14 +24,22 @@ if (SpeechRecognition) {
 		const transcript = result[0].transcript.trim();
 		currentTranscript = transcript;
 		setTranscript(transcript || "Speak now");
+		scheduleInactivityRefresh();
 	};
 
 	recognizer.onspeechstart = () => toggleSpeechAnimation(true);
 	recognizer.onspeechend = () => toggleSpeechAnimation(false);
 
 	recognizer.onerror = () => {
-		setTranscript("There was an error. Try again.");
+		isRecognizing = false;
 		toggleSpeechAnimation(false);
+		if (shouldListen) {
+			setTranscript("Didn't catch that - listening again");
+			scheduleInactivityRefresh();
+			restartRecognizer();
+			return;
+		}
+		setTranscript("There was an error. Try again.");
 		toIdle();
 		scheduleTranscriptReset(1500);
 	};
@@ -37,6 +47,10 @@ if (SpeechRecognition) {
 	recognizer.onend = () => {
 		isRecognizing = false;
 		toggleSpeechAnimation(false);
+		if (shouldListen) {
+			restartRecognizer();
+			return;
+		}
 		toIdle();
 		if (!currentTranscript) scheduleTranscriptReset(0);
 	};
@@ -58,6 +72,30 @@ function scheduleTranscriptReset(delay = 0) {
 		currentTranscript = "";
 		textBox.textContent = "Speak now";
 		resetTranscriptTimeout = null;
+	}, delay);
+}
+
+function clearInactivityRefresh() {
+	if (!inactivityTimeout) return;
+	window.clearTimeout(inactivityTimeout);
+	inactivityTimeout = null;
+}
+
+function scheduleInactivityRefresh(delay = 10000) {
+	clearInactivityRefresh();
+	inactivityTimeout = window.setTimeout(() => {
+		if (!shouldListen) return;
+		currentTranscript = "";
+		setTranscript("Still listening - resetting...");
+		if (recognizer && isRecognizing) {
+			try {
+				recognizer.stop();
+			} catch (err) {
+				console.warn("Failed to stop for refresh", err);
+			}
+			return;
+		}
+		restartRecognizer();
 	}, delay);
 }
 
@@ -92,27 +130,40 @@ function toIdle() {
 }
 
 function startListening() {
-	if (isRecognizing) return;
+	shouldListen = true;
 	toListening();
+	restartRecognizer("Speak now");
+}
+
+function stopListening() {
+	shouldListen = false;
+	if (recognizer) {
+		recognizer.stop();
+	}
+	clearInactivityRefresh();
+	toggleSpeechAnimation(false);
+	toIdle();
+	scheduleTranscriptReset(500);
+}
+
+function restartRecognizer(message) {
+	if (!shouldListen) return;
 	if (!recognizer) return;
+	if (isRecognizing) return;
 	try {
 		currentTranscript = "";
-		setTranscript("Speak now");
+		if (message) {
+			setTranscript(message);
+		} else {
+			setTranscript("Speak now");
+		}
 		isRecognizing = true;
 		recognizer.start();
+		scheduleInactivityRefresh();
 	} catch (err) {
 		console.warn("Speech start failed", err);
 		isRecognizing = false;
 	}
-}
-
-function stopListening() {
-	if (recognizer) {
-		recognizer.stop();
-	}
-	toggleSpeechAnimation(false);
-	toIdle();
-	scheduleTranscriptReset(500);
 }
 
 if (closeButton) closeButton.disabled = true;

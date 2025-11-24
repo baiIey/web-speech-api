@@ -26,10 +26,12 @@
 	/* iPhone 16 Pro-ish artboard; scale now 1:1 with design pixels */
 	--device-width: 402px;
 	--device-height: 874px;
-	--animation-duration: 0.5s;
+	--animation-duration: 0.4s;
 	--scale: 1;
 	--frame-padding: clamp(18px, 4vw, 56px);
 	--fit-scale: 1;
+	--device-render-width: var(--device-width);
+	--device-render-height: var(--device-height);
 	--bg-color: #fff;
 	--device-bg-color: #f5f5f5;
 	--card-bg-color: #fff;
@@ -61,34 +63,39 @@ body {
 	align-items: center;
 	justify-content: center;
 	padding: var(--frame-padding);
-	--fit-scale: min(
-		1,
-		(calc(100vw - (var(--frame-padding) * 2)) / var(--device-width)),
-		(calc(100vh - (var(--frame-padding) * 2)) / var(--device-height))
+	--fit-scale: clamp(
+		0,
+		min(
+			1,
+			(calc(100vw - (var(--frame-padding) * 2)) / var(--device-width)),
+			(calc(100vh - (var(--frame-padding) * 2)) / var(--device-height))
+		),
+		1
 	);
+	--device-render-width: calc(var(--device-width) * var(--fit-scale));
+	--device-render-height: calc(var(--device-height) * var(--fit-scale));
 }
 
 .device {
 	position: relative;
-	width: var(--device-width);
-	height: var(--device-height);
-	max-width: var(--device-width);
-	max-height: var(--device-height);
+	width: var(--device-render-width);
+	height: var(--device-render-height);
+	max-width: var(--device-render-width);
+	max-height: var(--device-render-height);
 	overflow: hidden;
+	--scale: var(--fit-scale);
 	background: var(--device-bg-color);
 	box-shadow:
-		0 4px 6px -1px rgba(0, 0, 0, 0.12),
-		0 2px 4px -2px rgba(0, 0, 0, 0.1);
+		0 calc(4px * var(--fit-scale)) calc(6px * var(--fit-scale)) calc(-1px * var(--fit-scale)) rgba(0, 0, 0, 0.12),
+		0 calc(2px * var(--fit-scale)) calc(4px * var(--fit-scale)) calc(-2px * var(--fit-scale)) rgba(0, 0, 0, 0.1);
 	border-radius: 0;
 	--logo-delay: 0s;
 	--text-delay: 0s;
 	--dots-delay: 0s;
-	--footer-delay: 0s;
+	--header-delay: 0s;
 	--halo-scale: 0;
-	--logo-shift: 0px;
-	--dots-shift: 0px;
-	transform: scale(var(--fit-scale));
-	transform-origin: center top;
+	--logo-offset: calc(-264px * var(--scale));
+	--dots-offset: var(--logo-offset);
 }
 
 .layer {
@@ -106,9 +113,9 @@ body {
 
 .google-logo {
 	position: absolute;
-	top: calc(150px * var(--scale));
+	top: 50%;
 	left: 50%;
-	transform: translate(-50%, var(--logo-shift));
+	transform: translate(-50%, -50%) translateY(var(--logo-offset));
 	width: calc(128px * var(--scale));
 	height: auto;
 	transition:
@@ -119,9 +126,9 @@ body {
 
 .g-dots {
 	position: absolute;
-	top: calc(266px * var(--scale));
+	top: 50%;
 	left: 50%;
-	transform: translate(-50%, var(--dots-shift));
+	transform: translate(-50%, -50%) translateY(var(--dots-offset));
 	opacity: 0;
 	background: var(--card-bg-color);
 	border-radius: 999px;
@@ -143,9 +150,10 @@ body {
 }
 
 .g-dots#gDotSpeech {
-	top: calc(455px * var(--scale));
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) translateY(var(--dots-offset));
 	background: transparent;
-	transform: translateX(-50%);
 	opacity: 0;
 	z-index: 7;
 }
@@ -160,8 +168,11 @@ body {
 }
 
 .transcript {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	padding: 0 32px;
 	pointer-events: none;
-	padding: calc(42px * var(--scale)) calc(17px * var(--scale)) 0 calc(21px * var(--scale));
 	z-index: 8;
 }
 
@@ -170,9 +181,11 @@ body {
 	font-weight: 300;
 	font-size: calc(19px * var(--scale));
 	line-height: calc(22px * var(--scale));
-	max-width: calc(126px * var(--scale));
 	opacity: 0;
+	position: absolute;
+	top: 25%;
 	transition: opacity 0.1s ease var(--text-delay);
+	text-align: center;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -221,12 +234,11 @@ body {
 
 .mic-button {
 	position: absolute;
-	bottom: calc(584px * var(--scale));
-	right: 84px;
-	width: calc(49px * var(--scale));
-	height: calc(49px * var(--scale));
+	top: calc(230px * var(--scale));
+	width: calc(375px * var(--scale));
+	height: calc(80px * var(--scale));
 	border: none;
-	border-radius: 50%;
+	border-radius: 40px;
 	background: transparent;
 	cursor: pointer;
 	pointer-events: auto;
@@ -237,42 +249,42 @@ body {
 	opacity: 0.5;
 }
 
-.footer-btn {
+.header-btn {
 	position: absolute;
-	bottom: calc(25px * var(--scale));
+	top: calc(60px * var(--scale));
 	border: none;
 	background: transparent;
 	cursor: pointer;
 	pointer-events: none;
 	opacity: 0;
 	transition:
-		transform var(--animation-duration) ease var(--footer-delay),
-		opacity var(--animation-duration) ease var(--footer-delay);
+		transform var(--animation-duration) ease var(--header-delay),
+		opacity var(--animation-duration) ease var(--header-delay);
 	will-change: transform, opacity;
-	transform: translateY(calc(160px * var(--scale)));
+	transform: translateY(calc(-160px * var(--scale)));
 	z-index: 8;
 }
 
-.footer-btn img {
+.header-btn img {
 	width: calc(15px * var(--scale));
 	height: auto;
 	display: block;
 }
 
-.footer-btn.close {
+.header-btn.close {
 	left: calc(25px * var(--scale));
 }
 
-.footer-btn.web {
+.header-btn.web {
 	right: calc(25px * var(--scale));
-	bottom: calc(21px * var(--scale));
+	top: calc(60px * var(--scale));
 }
 
-.footer-btn.web img {
+.header-btn.web img {
 	width: calc(20px * var(--scale));
 }
 	
-.footer-btn.close img {
+.header-btn.close img {
 	width: calc(15px * var(--scale));
 }
 
@@ -285,13 +297,13 @@ body {
 }
 
 .device.listening {
-	--logo-delay: 0.18s;
+	--logo-delay: 0.04s;
 	--text-delay: 0.2s;
-	--dots-delay: 0.2s;
-	--footer-delay: 0.22s;
+	--dots-delay: 0.04s;
+	--header-delay: 0.2s;
 	--halo-scale: 19;
-	--logo-shift: calc(263px * var(--scale));
-	--dots-shift: calc(263px * var(--scale));
+	--logo-offset: 0px;
+	--dots-offset: 0px;
 }
 
 .device.listening .google-logo {
@@ -304,7 +316,6 @@ body {
 
 .device.listening #gDots {
 	opacity: 1;
-	transform: translate(-50%, var(--dots-shift));
 }
 
 .device.listening #gDotSpeech {
@@ -319,7 +330,7 @@ body {
 	opacity: 1;
 }
 
-.device.listening .footer-btn {
+.device.listening .header-btn {
 	opacity: 1;
 	transform: translateY(0);
 	pointer-events: auto;
