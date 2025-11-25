@@ -6,6 +6,14 @@
 	font-display: swap;
 }
 
+@font-face {
+	font-family: "Noto Sans SC";
+	src: url("fonts/NotoSansSC-VariableFont_wght.ttf") format("truetype");
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
 :root {
 	/* iPhone 16 Pro-ish artboard; scale now 1:1 with design pixels */
 	--device-width: 402px;
@@ -42,7 +50,7 @@ body {
 	align-items: center;
 	justify-content: center;
 	background: var(--bg-color);
-	font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	font-family: "Roboto", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 	color: var(--text-color);
 	overflow: hidden;
 }
@@ -276,7 +284,7 @@ body {
 }
 
 .header-btn img {
-	width: 25px;
+	width: 20px;
 	height: auto;
 	display: block;
 }

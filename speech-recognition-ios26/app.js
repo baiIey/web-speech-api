@@ -16,11 +16,15 @@ let lastRestart = 0;
 let watchdogTimeout;
 let promptSwapTimeout;
 let speechTimeout;
+let activeLanguage = null; // "en-US" | "zh-CN"
+let autoSwitchedLanguage = false;
+let listeningSessionStartedAt = 0;
 const MAX_RESTARTS_BEFORE_REBUILD = 20;
 const MIN_RESTART_GAP = 2000; // ms
 const WATCHDOG_MS = 8000;
 const INACTIVITY_REFRESH_MS = 12000;
 const PROMPT_SWAP_MS = 1200;
+const AUTO_DETECT_WINDOW_MS = 1500;
 
 /*
 Speech interaction touchpoints (keep these easy to scan for designers):
@@ -43,11 +47,18 @@ function enableTransitionsAfterPaint() {
 }
 enableTransitionsAfterPaint();
 
-function createRecognizer() {
+function pickDefaultLanguage() {
+	const langs = Array.isArray(navigator.languages) ? navigator.languages : [];
+	const prefersChinese = langs.some((l) => typeof l === "string" && l.toLowerCase().startsWith("zh"));
+	if (prefersChinese) return "zh-CN";
+	return "en-US";
+}
+
+function createRecognizer(language) {
 	const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 	if (!SpeechRecognition) return null;
 	const r = new SpeechRecognition();
-	r.lang = "en-US";
+	r.lang = language || "en-US";
 	r.interimResults = true;
 	// Some browsers support this; safe to ignore if not
 	try {
@@ -56,7 +67,8 @@ function createRecognizer() {
 	return r;
 }
 
-recognizer = createRecognizer();
+activeLanguage = pickDefaultLanguage();
+recognizer = createRecognizer(activeLanguage);
 if (!recognizer) {
 	setTranscript("SpeechRecognition unavailable in this browser.");
 	micButton.disabled = true;
@@ -170,6 +182,7 @@ function toIdle() {
 
 function startListening() {
 	shouldListen = true;
+	autoSwitchedLanguage = false;
 	toListening();
 	restartRecognizer("Speak now");
 	schedulePromptSwap();
@@ -209,6 +222,7 @@ function restartRecognizer(message) {
 		clearSpeechTimeout();
 		isRecognizing = true;
 		recognizer.start();
+		listeningSessionStartedAt = Date.now();
 		restartCount += 1;
 		scheduleInactivityRefresh(INACTIVITY_REFRESH_MS);
 		scheduleWatchdog();
@@ -234,7 +248,7 @@ function rebuildRecognizer() {
 			recognizer.onspeechend = null;
 		} catch (_) {}
 	}
-	recognizer = createRecognizer();
+	recognizer = createRecognizer(activeLanguage);
 	restartCount = 0;
 	if (!recognizer) {
 		setTranscript("SpeechRecognition unavailable in this browser.");
@@ -272,6 +286,9 @@ function attachRecognizerHandlers() {
 		scheduleInactivityRefresh();
 		clearWatchdog();
 		clearPromptSwap();
+		if (!result.isFinal) {
+			checkAutoLanguageSwitch(transcript);
+		}
 		// Speech UI: stop speaking animation on finals (onspeechend may not fire); keep rolling timeout during interim speech.
 		if (result.isFinal) {
 			toggleSpeechAnimation(false);
@@ -320,6 +337,38 @@ function attachRecognizerHandlers() {
 		toIdle();
 		if (!currentTranscript) scheduleTranscriptReset(0);
 	};
+}
+
+function checkAutoLanguageSwitch(transcript) {
+	if (autoSwitchedLanguage) return;
+	if (!transcript) return;
+	const elapsed = Date.now() - listeningSessionStartedAt;
+	if (elapsed > AUTO_DETECT_WINDOW_MS) return;
+	const targetLang = inferLanguageFromTranscript(transcript);
+	if (!targetLang) return;
+	if (targetLang === activeLanguage) return;
+	autoSwitchedLanguage = true;
+	switchActiveLanguage(targetLang);
+}
+
+function inferLanguageFromTranscript(transcript) {
+	const hanMatches = transcript.match(/\p{Script=Han}/gu) || [];
+	const latinMatches = transcript.match(/[A-Za-z]/g) || [];
+	const hanCount = hanMatches.length;
+	const latinCount = latinMatches.length;
+	const total = hanCount + latinCount;
+	if (total < 4) return null;
+	const hanRatio = hanCount / total;
+	if (hanRatio >= 0.45 && hanCount >= 3) return "zh-CN";
+	if (hanRatio <= 0.25 && latinCount >= 4) return "en-US";
+	return null;
+}
+
+function switchActiveLanguage(nextLang) {
+	activeLanguage = nextLang;
+	const langLabel = nextLang === "zh-CN" ? "中文" : "English";
+	setTranscript(`Listening in ${langLabel}`);
+	rebuildRecognizer();
 }
 
 attachRecognizerHandlers();
