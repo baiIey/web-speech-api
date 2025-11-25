@@ -4,13 +4,6 @@ const micButton = document.getElementById("micButton");
 const closeButton = document.getElementById("closeButton");
 const webButton = document.getElementById("webButton");
 
-// Let the first frame paint without transitions/animations, then enable them.
-window.requestAnimationFrame(() => {
-	window.requestAnimationFrame(() => {
-		document.body.classList.add("hydrated");
-	});
-});
-
 let uiState = "idle"; // idle | listening
 let currentTranscript = "";
 let recognizer;
@@ -28,6 +21,27 @@ const MIN_RESTART_GAP = 2000; // ms
 const WATCHDOG_MS = 8000;
 const INACTIVITY_REFRESH_MS = 12000;
 const PROMPT_SWAP_MS = 1200;
+
+/*
+Speech interaction touchpoints (keep these easy to scan for designers):
+- toggleSpeechAnimation() — adds/removes `.speaking`, swapping listening vs speaking animation.
+- toListening()/toIdle() — adds/removes `.listening`, shows/hides header controls.
+- schedulePromptSwap() — nudges text to “Start talking…” if no speech yet.
+- attachRecognizerHandlers() — maps recognizer events to UI (start/stop animations, prompts, watchdog).
+State flow (UI):
+- idle --startListening--> listening
+- listening --stopListening/recognizer end--> idle
+*/
+
+function enableTransitionsAfterPaint() {
+	// Let the first frame paint without transitions/animations, then enable them.
+	window.requestAnimationFrame(() => {
+		window.requestAnimationFrame(() => {
+			document.body.classList.add("hydrated");
+		});
+	});
+}
+enableTransitionsAfterPaint();
 
 function createRecognizer() {
 	const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -49,6 +63,8 @@ if (!recognizer) {
 	micButton.setAttribute("aria-disabled", "true");
 }
 
+// Timeout helpers: prompt swaps, transcript reset, speech animation off, inactivity refresh.
+// --- Timeout helpers: prompt swaps, transcript reset, speech animation off, inactivity refresh ---
 function clearTranscriptReset() {
 	if (!resetTranscriptTimeout) return;
 	window.clearTimeout(resetTranscriptTimeout);
@@ -134,6 +150,7 @@ function toggleSpeechAnimation(isThinking) {
 	}
 }
 
+// UI state toggles for listening/idle and header controls
 function toListening() {
 	if (uiState === "listening") return;
 	uiState = "listening";
@@ -255,8 +272,7 @@ function attachRecognizerHandlers() {
 		scheduleInactivityRefresh();
 		clearWatchdog();
 		clearPromptSwap();
-		// If we never get onspeechend (some browsers), fall back to ending the
-		// speaking animation on finals; otherwise keep a rolling timeout during speech.
+		// Speech UI: stop speaking animation on finals (onspeechend may not fire); keep rolling timeout during interim speech.
 		if (result.isFinal) {
 			toggleSpeechAnimation(false);
 		} else {
@@ -266,11 +282,13 @@ function attachRecognizerHandlers() {
 	};
 
 	recognizer.onspeechstart = () => {
+		// Speech UI: entering speaking state swaps to the speaking animation.
 		toggleSpeechAnimation(true);
 		clearWatchdog();
 		clearPromptSwap();
 	};
 	recognizer.onspeechend = () => {
+		// Speech UI: leave speaking state when speech ends normally.
 		toggleSpeechAnimation(false);
 		clearSpeechTimeout();
 		scheduleWatchdog();

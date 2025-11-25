@@ -344,12 +344,20 @@ body {
 	opacity: 1;
 }
 
+.device.listening .g-dots {
+	/* Listening state: show listening dots animation */
+}
+
 .device.listening #gDots {
 	opacity: 1;
 }
 
 .device.listening #gDotSpeech {
 	opacity: 0;
+}
+
+.device.listening.speaking .g-dots {
+	/* Speaking state: swap to speaking animation */
 }
 
 .device.listening.speaking #gDots {
