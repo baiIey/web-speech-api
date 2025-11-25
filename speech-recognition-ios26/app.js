@@ -25,6 +25,7 @@ const WATCHDOG_MS = 8000;
 const INACTIVITY_REFRESH_MS = 12000;
 const PROMPT_SWAP_MS = 1200;
 const AUTO_DETECT_WINDOW_MS = 1500;
+const STORAGE_KEY_LANGUAGE = "sr-demo-language";
 const getLanguageLabel = (lang) => (lang === "zh-CN" ? "中文" : "English");
 const getListeningPrompt = (lang) => (lang === "zh-CN" ? "正在使用中文聆听..." : "Listening in English...");
 const supportsUnicodePropertyEscapes = (() => {
@@ -37,6 +38,23 @@ const supportsUnicodePropertyEscapes = (() => {
 })();
 const HAN_CHAR_REGEX = supportsUnicodePropertyEscapes ? new RegExp("\\p{Script=Han}", "gu") : /[\u4E00-\u9FFF]/g;
 const LATIN_CHAR_REGEX = /[A-Za-z]/g;
+
+function getStoredLanguage() {
+	try {
+		const stored = window.localStorage.getItem(STORAGE_KEY_LANGUAGE);
+		return stored === "zh-CN" || stored === "en-US" ? stored : null;
+	} catch (_err) {
+		return null;
+	}
+}
+
+function setStoredLanguage(lang) {
+	try {
+		window.localStorage.setItem(STORAGE_KEY_LANGUAGE, lang);
+	} catch (_err) {
+		// Ignore storage failures (private mode, disabled storage, etc.)
+	}
+}
 
 /*
 Speech interaction touchpoints (keep these easy to scan for designers):
@@ -79,7 +97,7 @@ function createRecognizer(language) {
 	return r;
 }
 
-activeLanguage = pickDefaultLanguage();
+activeLanguage = getStoredLanguage() || pickDefaultLanguage();
 recognizer = createRecognizer(activeLanguage);
 if (!recognizer) {
 	setTranscript("Speech recognition isn't supported here. Try Chrome, Edge, or Safari over HTTPS.");
@@ -395,6 +413,7 @@ function switchActiveLanguage(nextLang) {
 	activeLanguage = nextLang;
 	const langLabel = getLanguageLabel(nextLang);
 	setTranscript(getListeningPrompt(nextLang));
+	setStoredLanguage(nextLang);
 	rebuildRecognizer();
 }
 
