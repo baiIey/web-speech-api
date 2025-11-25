@@ -2,7 +2,7 @@ const device = document.getElementById("device");
 const textBox = document.getElementById("textBox");
 const micButton = document.getElementById("micButton");
 const closeButton = document.getElementById("closeButton");
-const webButton = document.getElementById("webButton");
+const settingsButton = document.getElementById("settingsButton");
 
 let uiState = "idle"; // idle | listening
 let currentTranscript = "";
@@ -25,6 +25,18 @@ const WATCHDOG_MS = 8000;
 const INACTIVITY_REFRESH_MS = 12000;
 const PROMPT_SWAP_MS = 1200;
 const AUTO_DETECT_WINDOW_MS = 1500;
+const getLanguageLabel = (lang) => (lang === "zh-CN" ? "中文" : "English");
+const getListeningPrompt = (lang) => (lang === "zh-CN" ? "正在使用中文聆听..." : "Listening in English...");
+const supportsUnicodePropertyEscapes = (() => {
+	try {
+		new RegExp("\\p{Script=Han}", "u");
+		return true;
+	} catch (_err) {
+		return false;
+	}
+})();
+const HAN_CHAR_REGEX = supportsUnicodePropertyEscapes ? new RegExp("\\p{Script=Han}", "gu") : /[\u4E00-\u9FFF]/g;
+const LATIN_CHAR_REGEX = /[A-Za-z]/g;
 
 /*
 Speech interaction touchpoints (keep these easy to scan for designers):
@@ -70,7 +82,7 @@ function createRecognizer(language) {
 activeLanguage = pickDefaultLanguage();
 recognizer = createRecognizer(activeLanguage);
 if (!recognizer) {
-	setTranscript("SpeechRecognition unavailable in this browser.");
+	setTranscript("Speech recognition isn't supported here. Try Chrome, Edge, or Safari over HTTPS.");
 	micButton.disabled = true;
 	micButton.setAttribute("aria-disabled", "true");
 }
@@ -168,7 +180,7 @@ function toListening() {
 	uiState = "listening";
 	device.classList.add("listening");
 	if (closeButton) closeButton.disabled = false;
-	if (webButton) webButton.disabled = false;
+	if (settingsButton) settingsButton.disabled = false;
 }
 
 function toIdle() {
@@ -177,7 +189,7 @@ function toIdle() {
 	device.classList.remove("listening");
 	device.classList.remove("speaking");
 	if (closeButton) closeButton.disabled = true;
-	if (webButton) webButton.disabled = true;
+	if (settingsButton) settingsButton.disabled = true;
 }
 
 function startListening() {
@@ -226,14 +238,14 @@ function restartRecognizer(message) {
 		restartCount += 1;
 		scheduleInactivityRefresh(INACTIVITY_REFRESH_MS);
 		scheduleWatchdog();
-			schedulePromptSwap();
-			if (restartCount >= MAX_RESTARTS_BEFORE_REBUILD) {
-				rebuildRecognizer();
-			}
-		} catch (err) {
-			console.warn("Speech start failed", err);
-			isRecognizing = false;
+		schedulePromptSwap();
+		if (restartCount >= MAX_RESTARTS_BEFORE_REBUILD) {
+			rebuildRecognizer();
 		}
+	} catch (err) {
+		console.warn("Speech start failed", err);
+		isRecognizing = false;
+	}
 }
 
 function rebuildRecognizer() {
@@ -311,10 +323,25 @@ function attachRecognizerHandlers() {
 		scheduleWatchdog();
 	};
 
-	recognizer.onerror = () => {
+	recognizer.onerror = (event) => {
 		isRecognizing = false;
 		clearWatchdog();
 		toggleSpeechAnimation(false);
+		const error = event?.error;
+		if (error === "not-allowed" || error === "service-not-allowed") {
+			shouldListen = false;
+			toIdle();
+			setTranscript("Mic access is blocked. Enable the mic, then tap to try again.");
+			scheduleTranscriptReset(4000);
+			return;
+		}
+		if (error === "network") {
+			shouldListen = false;
+			toIdle();
+			setTranscript("Network issue. Check your connection, then tap to retry.");
+			scheduleTranscriptReset(4000);
+			return;
+		}
 		if (shouldListen) {
 			setTranscript("Didn't catch that - listening again");
 			scheduleInactivityRefresh();
@@ -352,8 +379,8 @@ function checkAutoLanguageSwitch(transcript) {
 }
 
 function inferLanguageFromTranscript(transcript) {
-	const hanMatches = transcript.match(/\p{Script=Han}/gu) || [];
-	const latinMatches = transcript.match(/[A-Za-z]/g) || [];
+	const hanMatches = transcript.match(HAN_CHAR_REGEX) || [];
+	const latinMatches = transcript.match(LATIN_CHAR_REGEX) || [];
 	const hanCount = hanMatches.length;
 	const latinCount = latinMatches.length;
 	const total = hanCount + latinCount;
@@ -366,17 +393,27 @@ function inferLanguageFromTranscript(transcript) {
 
 function switchActiveLanguage(nextLang) {
 	activeLanguage = nextLang;
-	const langLabel = nextLang === "zh-CN" ? "中文" : "English";
-	setTranscript(`Listening in ${langLabel}`);
+	const langLabel = getLanguageLabel(nextLang);
+	setTranscript(getListeningPrompt(nextLang));
 	rebuildRecognizer();
+}
+
+function toggleActiveLanguage() {
+	const nextLang = activeLanguage === "zh-CN" ? "en-US" : "zh-CN";
+	autoSwitchedLanguage = false;
+	switchActiveLanguage(nextLang);
+	if (!shouldListen) {
+		scheduleTranscriptReset(2000);
+	}
 }
 
 attachRecognizerHandlers();
 
 if (closeButton) closeButton.disabled = true;
-if (webButton) webButton.disabled = true;
+if (settingsButton) settingsButton.disabled = true;
 
 if (micButton) micButton.addEventListener("click", startListening);
 if (closeButton) closeButton.addEventListener("click", stopListening);
+if (settingsButton) settingsButton.addEventListener("click", toggleActiveLanguage);
 toggleSpeechAnimation(false);
 setTranscript("Speak now");
