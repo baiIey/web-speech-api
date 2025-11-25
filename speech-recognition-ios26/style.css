@@ -6,33 +6,6 @@
 	font-display: swap;
 }
 
-@font-face {
-	font-family: "Roboto";
-	src:
-		local("Roboto Light"),
-		local("Roboto-Light"),
-		url("https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmSU5fBBc4.woff2") format("woff2");
-	font-weight: 300;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "Roboto";
-	src: url("fonts/Roboto-Medium.ttf") format("truetype");
-	font-weight: 500;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "Roboto";
-	src: url("fonts/Roboto-SemiBold.ttf") format("truetype");
-	font-weight: 600;
-	font-style: normal;
-	font-display: swap;
-}
-
 :root {
 	/* iPhone 16 Pro-ish artboard; scale now 1:1 with design pixels */
 	--device-width: 402px;
@@ -47,7 +20,6 @@
 	--device-bg-color: #f5f5f5;
 	--card-bg-color: #fff;
 	--text-color: #000;
-	--muted-text-color: #3C4043;
 	--halo-color: #fff;
 }
 
@@ -235,7 +207,6 @@ body {
 		--device-bg-color: #1e1e1e;
 		--card-bg-color: rgba(255, 255, 255, 0.08);
 		--text-color: #e5e7eb;
-		--muted-text-color: #cbd5e1;
 		--halo-color: #fff;
 	}
 }
@@ -344,20 +315,12 @@ body {
 	opacity: 1;
 }
 
-.device.listening .g-dots {
-	/* Listening state: show listening dots animation */
-}
-
 .device.listening #gDots {
 	opacity: 1;
 }
 
 .device.listening #gDotSpeech {
 	opacity: 0;
-}
-
-.device.listening.speaking .g-dots {
-	/* Speaking state: swap to speaking animation */
 }
 
 .device.listening.speaking #gDots {
