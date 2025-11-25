@@ -27,6 +27,8 @@
 	--fit-scale: 1;
 	--frame-padding: clamp(18px, 4vw, 56px);
 	--halo-color: #fff;
+	--icon-color: #000;
+	--status-filter: none;
 	--scale: 1;
 	--text-color: #000;
 }
@@ -90,11 +92,11 @@ body {
 		0 calc(2px * var(--fit-scale)) calc(4px * var(--fit-scale)) calc(-2px * var(--fit-scale)) rgba(0, 0, 0, 0.1);
 	border-radius: 0;
 	height: var(--device-render-height);
-	max-height: var(--device-render-height);
-	max-width: var(--device-render-width);
 	overflow: hidden;
 	position: relative;
 	width: var(--device-render-width);
+	max-height: var(--device-render-height);
+	max-width: var(--device-render-width);
 }
 
 .layer {
@@ -104,10 +106,21 @@ body {
 }
 
 .bg {
+	display: block;
 	height: 100%;
-	object-fit: cover;
+	inset: 0;
+	position: absolute;
 	width: 100%;
 	z-index: 1;
+}
+
+.bg img {
+	display: block;
+	height: 100%;
+	inset: 0;
+	object-fit: cover;
+	position: absolute;
+	width: 100%;
 }
 
 .google-logo {
@@ -121,6 +134,34 @@ body {
 		opacity var(--animation-duration) ease var(--logo-delay),
 		transform var(--animation-duration) ease var(--logo-delay);
 	will-change: opacity, transform;
+}
+
+.google-logo img {
+	display: block;
+	height: auto;
+	width: 100%;
+}
+
+.google-logo .google-blue {
+	fill: #4285f4;
+}
+.google-logo .google-red {
+	fill: #ea4335;
+}
+.google-logo .google-yellow {
+	fill: #fbbc05;
+}
+.google-logo .google-green {
+	fill: #34a853;
+}
+
+@media (prefers-color-scheme: dark) {
+	.google-logo .google-blue,
+	.google-logo .google-red,
+	.google-logo .google-yellow,
+	.google-logo .google-green {
+		fill: #ffffff;
+	}
 }
 
 .g-dots {
@@ -164,6 +205,7 @@ body {
 	top: 0;
 	width: 100%;
 	z-index: 10;
+	filter: var(--status-filter);
 }
 
 .transcript {
@@ -209,10 +251,12 @@ body {
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--bg-color: #1e1e1e;
+		--bg-color: #272727;
 		--card-bg-color: rgba(255, 255, 255, 0.08);
 		--device-bg-color: #1e1e1e;
 		--halo-color: #fff;
+		--icon-color: #e5e7eb;
+		--status-filter: invert(1);
 		--text-color: #e5e7eb;
 		color-scheme: light dark;
 	}
@@ -270,6 +314,7 @@ body {
 .header-btn {
 	background: transparent;
 	border: none;
+	color: var(--icon-color);
 	cursor: pointer;
 	opacity: 0;
 	pointer-events: none;
@@ -285,6 +330,12 @@ body {
 .header-btn img {
 	display: block;
 	height: auto;
+	width: 20px;
+}
+
+.header-btn svg {
+	display: block;
+	height: 20px;
 	width: 20px;
 }
 
