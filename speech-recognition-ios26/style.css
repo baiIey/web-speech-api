@@ -218,7 +218,7 @@ body {
 }
 
 .transcript-text {
-	color: #3C4043;
+	color: var(--text-color);
 	font-size: calc(22px * var(--scale));
 	font-weight: 400;
 	line-height: calc(28px * var(--scale));
@@ -254,10 +254,10 @@ body {
 		--bg-color: #272727;
 		--card-bg-color: rgba(255, 255, 255, 0.08);
 		--device-bg-color: #1e1e1e;
-		--halo-color: #fff;
-		--icon-color: #e5e7eb;
+		--halo-color: #1f1f1f;
+		--icon-color: #e9e9e9;
 		--status-filter: invert(1);
-		--text-color: #e5e7eb;
+		--text-color: #e9e9e9;
 		color-scheme: light dark;
 	}
 }

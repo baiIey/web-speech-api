@@ -25,6 +25,7 @@
 		<link rel="preload" href="images/g-dots-360-1.gif" as="image" type="image/gif" />
 		<link rel="preload" href="images/gDotSpeech.gif" as="image" type="image/gif" />
 		<link rel="preload" href="images/searchSongs.jpg" as="image" type="image/jpeg" />
+		<link rel="preload" href="images/searchSongsDark.png" as="image" type="image/png" media="(prefers-color-scheme: dark)" />
 		<link rel="preload" href="images/googleLogo.svg" as="image" type="image/svg+xml" />
 	</head>
 	<body>
@@ -65,7 +66,10 @@
 				</div>
 
 				<div class="layer search-song">
-					<img src="images/searchSongs.jpg" alt="Search a song" width="436" height="130" />
+					<picture>
+						<source srcset="images/searchSongsDark.png" media="(prefers-color-scheme: dark)" />
+						<img src="images/searchSongs.jpg" alt="Search a song" width="436" height="130" />
+					</picture>
 				</div>
 
 				<div class="layer mic-area">
