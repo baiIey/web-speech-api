@@ -15,6 +15,7 @@ let restartCount = 0;
 let lastRestart = 0;
 let watchdogTimeout;
 let promptSwapTimeout;
+let speechTimeout;
 const MAX_RESTARTS_BEFORE_REBUILD = 20;
 const MIN_RESTART_GAP = 2000; // ms
 const WATCHDOG_MS = 8000;
@@ -74,6 +75,19 @@ function schedulePromptSwap() {
 	}, PROMPT_SWAP_MS);
 }
 
+function clearSpeechTimeout() {
+	if (!speechTimeout) return;
+	window.clearTimeout(speechTimeout);
+	speechTimeout = null;
+}
+
+function scheduleSpeechTimeout() {
+	clearSpeechTimeout();
+	speechTimeout = window.setTimeout(() => {
+		toggleSpeechAnimation(false);
+	}, 1500);
+}
+
 function clearInactivityRefresh() {
 	if (!inactivityTimeout) return;
 	window.clearTimeout(inactivityTimeout);
@@ -106,8 +120,10 @@ function setTranscript(value) {
 function toggleSpeechAnimation(isThinking) {
 	if (isThinking) {
 		device.classList.add("speaking");
+		scheduleSpeechTimeout();
 	} else {
 		device.classList.remove("speaking");
+		clearSpeechTimeout();
 	}
 }
 
@@ -141,6 +157,7 @@ function stopListening() {
 		recognizer.stop();
 	}
 	clearPromptSwap();
+	clearSpeechTimeout();
 	clearInactivityRefresh();
 	toggleSpeechAnimation(false);
 	toIdle();
@@ -157,18 +174,20 @@ function restartRecognizer(message) {
 		return;
 	}
 	lastRestart = now;
-		try {
-			currentTranscript = "";
-			if (message) {
-				setTranscript(message);
-			} else {
-				setTranscript("Speak now");
-			}
-			isRecognizing = true;
-			recognizer.start();
-			restartCount += 1;
-			scheduleInactivityRefresh(INACTIVITY_REFRESH_MS);
-			scheduleWatchdog();
+	try {
+		currentTranscript = "";
+		if (message) {
+			setTranscript(message);
+		} else {
+			setTranscript("Speak now");
+		}
+		toggleSpeechAnimation(false);
+		clearSpeechTimeout();
+		isRecognizing = true;
+		recognizer.start();
+		restartCount += 1;
+		scheduleInactivityRefresh(INACTIVITY_REFRESH_MS);
+		scheduleWatchdog();
 			schedulePromptSwap();
 			if (restartCount >= MAX_RESTARTS_BEFORE_REBUILD) {
 				rebuildRecognizer();
@@ -229,6 +248,13 @@ function attachRecognizerHandlers() {
 		scheduleInactivityRefresh();
 		clearWatchdog();
 		clearPromptSwap();
+		// If we never get onspeechend (some browsers), fall back to ending the
+		// speaking animation on finals; otherwise keep a rolling timeout during speech.
+		if (result.isFinal) {
+			toggleSpeechAnimation(false);
+		} else {
+			scheduleSpeechTimeout();
+		}
 		if (isRecognizing) scheduleWatchdog();
 	};
 
@@ -239,6 +265,7 @@ function attachRecognizerHandlers() {
 	};
 	recognizer.onspeechend = () => {
 		toggleSpeechAnimation(false);
+		clearSpeechTimeout();
 		scheduleWatchdog();
 	};
 
