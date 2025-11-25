@@ -14,19 +14,37 @@
 		<link rel="preload" href="fonts/Roboto-Regular.ttf" as="font" type="font/ttf" crossorigin />
 		<link rel="preload" href="fonts/Roboto-Medium.ttf" as="font" type="font/ttf" crossorigin />
 		<link rel="preload" href="fonts/Roboto-SemiBold.ttf" as="font" type="font/ttf" crossorigin />
+		<link rel="preload" href="images/googleApp.svg" as="image" type="image/svg+xml" />
+		<link rel="preload" href="images/googleImg@2x.png" as="image" type="image/png" />
+		<link rel="preload" href="images/g-dots-360-1.gif" as="image" type="image/gif" />
+		<link rel="preload" href="images/gDotSpeech.gif" as="image" type="image/gif" />
+		<link rel="preload" href="images/searchSongs.jpg" as="image" type="image/jpeg" />
 	</head>
 	<body>
 		<div class="app">
 			<div class="device" id="device">
-				<img class="layer bg" src="images/googleApp.svg" alt="Google app background" />
+				<img
+					class="layer bg"
+					src="images/googleApp.svg"
+					alt="Google app background"
+					loading="eager"
+				/>
 
 				<div class="layer google-area">
-					<img class="google-logo" id="googleLogo" src="images/googleImg@2x.png" alt="Google" />
+					<img
+						class="google-logo"
+						id="googleLogo"
+						src="images/googleImg@2x.png"
+						alt="Google"
+						width="318"
+						height="106"
+						loading="eager"
+					/>
 					<div class="g-dots" id="gDots">
-						<img src="images/g-dots-360-1.gif" alt="Listening animation" />
+						<img src="images/g-dots-360-1.gif" alt="Listening animation" width="360" height="203" />
 					</div>
 					<div class="g-dots speech" id="gDotSpeech">
-						<img src="images/gDotSpeech.gif" alt="Speech animation" />
+						<img src="images/gDotSpeech.gif" alt="Speech animation" width="666" height="270" />
 					</div>
 				</div>
 
@@ -35,7 +53,7 @@
 				</div>
 
 				<div class="layer search-song">
-					<img src="images/searchSongs.jpg" alt="Search a song" />
+					<img src="images/searchSongs.jpg" alt="Search a song" width="436" height="130" />
 				</div>
 
 				<div class="layer mic-area">

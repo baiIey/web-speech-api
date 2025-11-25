@@ -4,6 +4,13 @@ const micButton = document.getElementById("micButton");
 const closeButton = document.getElementById("closeButton");
 const webButton = document.getElementById("webButton");
 
+// Let the first frame paint without transitions/animations, then enable them.
+window.requestAnimationFrame(() => {
+	window.requestAnimationFrame(() => {
+		document.body.classList.add("hydrated");
+	});
+});
+
 let uiState = "idle"; // idle | listening
 let currentTranscript = "";
 let recognizer;

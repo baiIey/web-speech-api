@@ -51,6 +51,14 @@
 	--halo-color: #fff;
 }
 
+/* Avoid any movement on first paint; enable transitions after hydration */
+body:not(.hydrated) *,
+body:not(.hydrated) *::before,
+body:not(.hydrated) *::after {
+	transition: none !important;
+	animation: none !important;
+}
+
 * {
 	box-sizing: border-box;
 }
