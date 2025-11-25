@@ -292,7 +292,7 @@ body {
 	left: calc(25px * var(--scale));
 }
 
-.header-btn.web {
+.header-btn.translate {
 	right: calc(25px * var(--scale));
 }
 
