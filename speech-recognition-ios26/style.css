@@ -1,42 +1,42 @@
 @font-face {
-	font-family: "Roboto";
-	src: url("fonts/Roboto-VariableFont_wdth,wght.ttf") format("truetype");
-	font-weight: 100 900;
-	font-style: normal;
 	font-display: swap;
+	font-family: "Roboto";
+	font-style: normal;
+	font-weight: 100 900;
+	src: url("fonts/Roboto-VariableFont_wdth,wght.ttf") format("truetype");
 }
 
 @font-face {
-	font-family: "Noto Sans SC";
-	src: url("fonts/NotoSansSC-VariableFont_wght.ttf") format("truetype");
-	font-weight: 100 900;
-	font-style: normal;
 	font-display: swap;
+	font-family: "Noto Sans SC";
+	font-style: normal;
+	font-weight: 100 900;
+	src: url("fonts/NotoSansSC-VariableFont_wght.ttf") format("truetype");
 }
 
 :root {
 	/* iPhone 16 Pro-ish artboard; scale now 1:1 with design pixels */
-	--device-width: 402px;
-	--device-height: 874px;
 	--animation-duration: 0.4s;
-	--scale: 1;
-	--frame-padding: clamp(18px, 4vw, 56px);
-	--fit-scale: 1;
-	--device-render-width: var(--device-width);
-	--device-render-height: var(--device-height);
 	--bg-color: #fff;
-	--device-bg-color: #f5f5f5;
 	--card-bg-color: #fff;
-	--text-color: #000;
+	--device-bg-color: #f5f5f5;
+	--device-height: 874px;
+	--device-render-height: var(--device-height);
+	--device-render-width: var(--device-width);
+	--device-width: 402px;
+	--fit-scale: 1;
+	--frame-padding: clamp(18px, 4vw, 56px);
 	--halo-color: #fff;
+	--scale: 1;
+	--text-color: #000;
 }
 
 /* Avoid any movement on first paint; enable transitions after hydration */
 body:not(.hydrated) *,
 body:not(.hydrated) *::before,
 body:not(.hydrated) *::after {
-	transition: none !important;
 	animation: none !important;
+	transition: none !important;
 }
 
 * {
@@ -44,24 +44,20 @@ body:not(.hydrated) *::after {
 }
 
 body {
+	align-items: center;
+	background: var(--bg-color);
+	color: var(--text-color);
+	display: flex;
+	font-family: "Roboto", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	justify-content: center;
 	margin: 0;
 	min-height: 100vh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: var(--bg-color);
-	font-family: "Roboto", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-	color: var(--text-color);
 	overflow: hidden;
 }
 
 .app {
-	min-height: 100vh;
-	width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: var(--frame-padding);
+	--device-render-height: calc(var(--device-height) * var(--fit-scale));
+	--device-render-width: calc(var(--device-width) * var(--fit-scale));
 	--fit-scale: clamp(
 		0,
 		min(
@@ -71,77 +67,81 @@ body {
 		),
 		1
 	);
-	--device-render-width: calc(var(--device-width) * var(--fit-scale));
-	--device-render-height: calc(var(--device-height) * var(--fit-scale));
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	min-height: 100vh;
+	padding: var(--frame-padding);
+	width: 100%;
 }
 
 .device {
-	position: relative;
-	width: var(--device-render-width);
-	height: var(--device-render-height);
-	max-width: var(--device-render-width);
-	max-height: var(--device-render-height);
-	overflow: hidden;
+	--dots-delay: 0s;
+	--dots-offset: var(--logo-offset);
+	--halo-scale: 0;
+	--header-delay: 0s;
+	--logo-delay: 0s;
+	--logo-offset: calc(-264px * var(--scale));
 	--scale: var(--fit-scale);
+	--text-delay: 0s;
 	background: var(--device-bg-color);
 	box-shadow:
 		0 calc(4px * var(--fit-scale)) calc(6px * var(--fit-scale)) calc(-1px * var(--fit-scale)) rgba(0, 0, 0, 0.12),
 		0 calc(2px * var(--fit-scale)) calc(4px * var(--fit-scale)) calc(-2px * var(--fit-scale)) rgba(0, 0, 0, 0.1);
 	border-radius: 0;
-	--logo-delay: 0s;
-	--text-delay: 0s;
-	--dots-delay: 0s;
-	--header-delay: 0s;
-	--halo-scale: 0;
-	--logo-offset: calc(-264px * var(--scale));
-	--dots-offset: var(--logo-offset);
+	height: var(--device-render-height);
+	max-height: var(--device-render-height);
+	max-width: var(--device-render-width);
+	overflow: hidden;
+	position: relative;
+	width: var(--device-render-width);
 }
 
 .layer {
-	position: absolute;
 	inset: 0;
 	pointer-events: none;
+	position: absolute;
 }
 
 .bg {
-	width: 100%;
 	height: 100%;
 	object-fit: cover;
+	width: 100%;
 	z-index: 1;
 }
 
 .google-logo {
+	height: auto;
+	left: 50%;
 	position: absolute;
 	top: 50%;
-	left: 50%;
 	transform: translate(-50%, -50%) translateY(var(--logo-offset));
 	width: calc(128px * var(--scale));
-	height: auto;
 	transition:
-		transform var(--animation-duration) ease var(--logo-delay),
-		opacity var(--animation-duration) ease var(--logo-delay);
-	will-change: transform, opacity;
+		opacity var(--animation-duration) ease var(--logo-delay),
+		transform var(--animation-duration) ease var(--logo-delay);
+	will-change: opacity, transform;
 }
 
 .g-dots {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%) translateY(var(--dots-offset));
-	opacity: 0;
 	background: var(--card-bg-color);
 	border-radius: 999px;
-	z-index: 6;
+	left: 50%;
+	opacity: 0;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%) translateY(var(--dots-offset));
 	transition:
 		opacity var(--animation-duration) ease var(--dots-delay),
 		transform var(--animation-duration) ease var(--dots-delay);
 	will-change: opacity, transform;
+	z-index: 6;
 }
 
 .g-dots img {
 	display: block;
-	width: calc(126px * var(--scale));
 	height: auto;
+	width: calc(126px * var(--scale));
 }
 
 .g-dots.speech img {
@@ -149,21 +149,21 @@ body {
 }
 
 .g-dots#gDotSpeech {
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%) translateY(var(--dots-offset));
 	background: transparent;
+	left: 50%;
 	opacity: 0;
+	top: 50%;
+	transform: translate(-50%, -50%) translateY(var(--dots-offset));
 	z-index: 7;
 }
 
 .status-bar {
-	top: 0;
-	width: 100%;
 	height: auto;
 	object-fit: cover;
-	z-index: 10;
 	pointer-events: none;
+	top: 0;
+	width: 100%;
+	z-index: 10;
 }
 
 .transcript {
@@ -177,57 +177,56 @@ body {
 
 .transcript-text {
 	color: #3C4043;
-	font-weight: 400;
 	font-size: calc(22px * var(--scale));
+	font-weight: 400;
 	line-height: calc(28px * var(--scale));
 	opacity: 0;
 	position: absolute;
+	text-align: center;
 	top: 25%;
 	transition: opacity 0.1s ease var(--text-delay);
-	text-align: center;
 }
 
-
 .search-song {
-	position: absolute;
 	inset: auto;
-	left: 50%;
 	bottom: 25%;
+	left: 50%;
+	pointer-events: none;
+	position: absolute;
 	transform: translate(-50%, 0);
 	opacity: 0;
-	z-index: 6;
-	pointer-events: none;
 	transition:
 		opacity var(--animation-duration) ease var(--header-delay),
 		transform var(--animation-duration) ease var(--header-delay);
+	z-index: 6;
 }
 
 .search-song img {
 	display: block;
-	width: calc(160px * var(--scale));
 	height: auto;
+	width: calc(160px * var(--scale));
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		color-scheme: light dark;
 		--bg-color: #1e1e1e;
-		--device-bg-color: #1e1e1e;
 		--card-bg-color: rgba(255, 255, 255, 0.08);
-		--text-color: #e5e7eb;
+		--device-bg-color: #1e1e1e;
 		--halo-color: #fff;
+		--text-color: #e5e7eb;
+		color-scheme: light dark;
 	}
 }
 
 .mic-area {
-	display: flex;
 	align-items: center;
+	display: flex;
 	justify-content: center;
 	pointer-events: auto;
-	z-index: 5;
 	transition:
 		opacity var(--animation-duration) ease,
 		transform var(--animation-duration) ease;
+	z-index: 5;
 }
 
 .mic-button {
@@ -237,30 +236,30 @@ body {
 }
 
 .mic-bg {
+	background: var(--halo-color);
+	border-radius: 50%;
+	height: calc(49px * var(--scale));
+	left: 50%;
 	position: absolute;
 	top: 50%;
-	left: 50%;
-	width: calc(49px * var(--scale));
-	height: calc(49px * var(--scale));
-	border-radius: 50%;
-	background: var(--halo-color);
 	transform: translate(-50%, -50%) scale(var(--halo-scale));
 	transform-origin: center;
 	transition:
-		transform var(--animation-duration) ease,
-		opacity var(--animation-duration) ease;
+		opacity var(--animation-duration) ease,
+		transform var(--animation-duration) ease;
+	width: calc(49px * var(--scale));
 }
 
 .mic-button {
+	background: transparent;
+	border: none;
+	border-radius: 40px;
+	cursor: pointer;
+	height: calc(80px * var(--scale));
+	pointer-events: auto;
 	position: absolute;
 	top: calc(230px * var(--scale));
 	width: calc(375px * var(--scale));
-	height: calc(80px * var(--scale));
-	border: none;
-	border-radius: 40px;
-	background: transparent;
-	cursor: pointer;
-	pointer-events: auto;
 }
 
 .mic-button:disabled {
@@ -269,24 +268,24 @@ body {
 }
 
 .header-btn {
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	opacity: 0;
+	pointer-events: none;
 	position: absolute;
 	top: calc(54px * var(--scale));
-	border: none;
-	background: transparent;
-	cursor: pointer;
-	pointer-events: none;
-	opacity: 0;
 	transition:
-		transform var(--animation-duration) ease var(--header-delay),
-		opacity var(--animation-duration) ease var(--header-delay);
-	will-change: transform, opacity;
+		opacity var(--animation-duration) ease var(--header-delay),
+		transform var(--animation-duration) ease var(--header-delay);
+	will-change: opacity, transform;
 	z-index: 8;
 }
 
 .header-btn img {
-	width: 20px;
-	height: auto;
 	display: block;
+	height: auto;
+	width: 20px;
 }
 
 .header-btn.close {
@@ -306,13 +305,13 @@ body {
 }
 
 .device.listening {
-	--logo-delay: 0.04s;
-	--text-delay: 0.2s;
 	--dots-delay: 0.04s;
-	--header-delay: 0.2s;
-	--halo-scale: 19;
-	--logo-offset: 0px;
 	--dots-offset: 0px;
+	--halo-scale: 19;
+	--header-delay: 0.2s;
+	--logo-delay: 0.04s;
+	--logo-offset: 0px;
+	--text-delay: 0.2s;
 }
 
 .device.listening .google-logo {
