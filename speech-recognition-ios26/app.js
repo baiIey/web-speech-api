@@ -426,6 +426,34 @@ function toggleActiveLanguage() {
 	}
 }
 
+function isTypingTarget(element) {
+	if (!(element instanceof HTMLElement)) return false;
+	if (element.isContentEditable) return true;
+	const tag = element.tagName;
+	return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+}
+
+function isButtonInteractive(button) {
+	if (!button) return false;
+	if (button.disabled) return false;
+	if (button.getAttribute("aria-disabled") === "true") return false;
+	return true;
+}
+
+function handleSpacebarShortcut(event) {
+	if (!micButton && !closeButton) return;
+	if (event.defaultPrevented) return;
+	if (event.repeat) return;
+	const isSpace = event.code === "Space" || event.key === " ";
+	if (!isSpace) return;
+	if (isTypingTarget(event.target)) return;
+	const targetButton = uiState === "listening" ? closeButton : micButton;
+	if (!isButtonInteractive(targetButton)) return;
+	event.preventDefault();
+	// Mirror a click on the active control so space toggles listening state.
+	targetButton.click();
+}
+
 attachRecognizerHandlers();
 
 if (closeButton) closeButton.disabled = true;
@@ -434,5 +462,6 @@ if (settingsButton) settingsButton.disabled = true;
 if (micButton) micButton.addEventListener("click", startListening);
 if (closeButton) closeButton.addEventListener("click", stopListening);
 if (settingsButton) settingsButton.addEventListener("click", toggleActiveLanguage);
+document.addEventListener("keydown", handleSpacebarShortcut);
 toggleSpeechAnimation(false);
 setTranscript("Speak now");
