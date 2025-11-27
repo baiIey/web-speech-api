@@ -26,7 +26,6 @@ const INACTIVITY_REFRESH_MS = 12000;
 const PROMPT_SWAP_MS = 1200;
 const AUTO_DETECT_WINDOW_MS = 1500;
 const STORAGE_KEY_LANGUAGE = "sr-demo-language";
-const getLanguageLabel = (lang) => (lang === "zh-CN" ? "中文" : "English");
 const getListeningPrompt = (lang) => (lang === "zh-CN" ? "正在使用中文聆听..." : "Listening in English...");
 const supportsUnicodePropertyEscapes = (() => {
 	try {
@@ -159,7 +158,7 @@ function clearInactivityRefresh() {
 	inactivityTimeout = null;
 }
 
-function scheduleInactivityRefresh(delay = 10000) {
+function scheduleInactivityRefresh(delay = INACTIVITY_REFRESH_MS) {
 	clearInactivityRefresh();
 	inactivityTimeout = window.setTimeout(() => {
 		if (!shouldListen) return;
@@ -174,7 +173,7 @@ function scheduleInactivityRefresh(delay = 10000) {
 			return;
 		}
 		restartRecognizer();
-	}, delay ?? INACTIVITY_REFRESH_MS);
+	}, delay);
 }
 
 function setTranscript(value) {
@@ -215,13 +214,16 @@ function startListening() {
 	autoSwitchedLanguage = false;
 	toListening();
 	restartRecognizer("Speak now");
-	schedulePromptSwap();
 }
 
 function stopListening() {
 	shouldListen = false;
 	if (recognizer) {
-		recognizer.stop();
+		try {
+			recognizer.stop();
+		} catch (err) {
+			console.warn("Recognizer stop failed", err);
+		}
 	}
 	clearPromptSwap();
 	clearSpeechTimeout();
@@ -411,7 +413,6 @@ function inferLanguageFromTranscript(transcript) {
 
 function switchActiveLanguage(nextLang) {
 	activeLanguage = nextLang;
-	const langLabel = getLanguageLabel(nextLang);
 	setTranscript(getListeningPrompt(nextLang));
 	setStoredLanguage(nextLang);
 	rebuildRecognizer();

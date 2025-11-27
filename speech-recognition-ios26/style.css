@@ -28,6 +28,7 @@
 	--frame-padding: clamp(18px, 4vw, 56px);
 	--halo-color: #fff;
 	--icon-color: #000;
+	--header-icon-size: 24px;
 	--status-filter: none;
 	--scale: 1;
 	--text-color: #000;
@@ -319,7 +320,7 @@ body {
 	opacity: 0;
 	pointer-events: none;
 	position: absolute;
-	top: calc(54px * var(--scale));
+	top: calc(72px * var(--scale));
 	transition:
 		opacity var(--animation-duration) ease var(--header-delay),
 		transform var(--animation-duration) ease var(--header-delay);
@@ -335,8 +336,8 @@ body {
 
 .header-btn svg {
 	display: block;
-	height: 25px;
-	width: 25px;
+	height: calc(var(--header-icon-size) * var(--scale));
+	width: calc(var(--header-icon-size) * var(--scale));
 }
 
 .header-btn.close {
