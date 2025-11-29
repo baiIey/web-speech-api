@@ -29,6 +29,8 @@
 	--halo-color: #fff;
 	--icon-color: #000;
 	--header-icon-size: 24px;
+	--dots-quiet-width: 126px;
+	--dots-speech-width: 117px;
 	--status-filter: none;
 	--scale: 1;
 	--text-color: #000;
@@ -178,16 +180,21 @@ body {
 		transform var(--animation-duration) ease var(--dots-delay);
 	will-change: opacity, transform;
 	z-index: 6;
+	width: calc(var(--dots-quiet-width) * var(--scale));
+}
+
+.g-dots img,
+.g-dots picture {
+	display: block;
+	width: 100%;
 }
 
 .g-dots img {
-	display: block;
 	height: auto;
-	width: calc(126px * var(--scale));
 }
 
-.g-dots.speech img {
-	width: calc(117px * var(--scale));
+.g-dots.speech {
+	width: calc(var(--dots-speech-width) * var(--scale));
 }
 
 .g-dots#gDotSpeech {
@@ -255,10 +262,12 @@ body {
 		--bg-color: #272727;
 		--card-bg-color: rgba(255, 255, 255, 0.08);
 		--device-bg-color: #1e1e1e;
-		--halo-color: #1f1f1f;
+		--halo-color: #1d1d1d;
 		--icon-color: #e9e9e9;
 		--status-filter: invert(1);
 		--text-color: #e9e9e9;
+		--dots-quiet-width: var(--device-width);
+		--dots-speech-width: var(--device-width);
 		color-scheme: light dark;
 	}
 }

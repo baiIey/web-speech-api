@@ -22,7 +22,9 @@
 		<link rel="preload" href="images/googleAppLight.png?v=2" as="image" type="image/png" />
 		<link rel="preload" href="images/googleAppDark.png?v=2" as="image" type="image/png" media="(prefers-color-scheme: dark)" />
 		<link rel="preload" href="images/g-dots-360-1.gif" as="image" type="image/gif" />
+		<link rel="preload" href="images/gdots-dark-quiet.gif" as="image" type="image/gif" media="(prefers-color-scheme: dark)" />
 		<link rel="preload" href="images/gDotSpeech.gif" as="image" type="image/gif" />
+		<link rel="preload" href="images/gdots-dark-listening.gif" as="image" type="image/gif" media="(prefers-color-scheme: dark)" />
 		<link rel="preload" href="images/searchSongs.jpg" as="image" type="image/jpeg" />
 		<link rel="preload" href="images/searchSongsDark.png" as="image" type="image/png" media="(prefers-color-scheme: dark)" />
 		<link rel="preload" href="images/googleLogo.svg" as="image" type="image/svg+xml" />
@@ -53,10 +55,16 @@
 						<path class="google-blue" d="M35.29 41.41V32H67c.31 1.64.47 3.58.47 5.68 0 7.06-1.93 15.79-8.15 22.01-6.05 6.3-13.78 9.66-24.02 9.66C16.32 69.35.36 53.89.36 34.91.36 15.93 16.32.47 35.3.47c10.5 0 17.98 4.12 23.6 9.49l-6.64 6.64c-4.03-3.78-9.49-6.72-16.97-6.72-13.86 0-24.7 11.17-24.7 25.03 0 13.86 10.84 25.03 24.7 25.03 8.99 0 14.11-3.61 17.39-6.89 2.66-2.66 4.41-6.46 5.1-11.65l-22.49.01z"/>
 					</svg>
 					<div class="g-dots" id="gDots">
-						<img src="images/g-dots-360-1.gif" alt="Listening animation" width="360" height="203" />
+						<picture>
+							<source srcset="images/gdots-dark-quiet.gif" media="(prefers-color-scheme: dark)" />
+							<img src="images/g-dots-360-1.gif" alt="Listening animation" width="360" height="203" />
+						</picture>
 					</div>
 					<div class="g-dots speech" id="gDotSpeech">
-						<img src="images/gDotSpeech.gif" alt="Speech animation" width="666" height="270" />
+						<picture>
+							<source srcset="images/gdots-dark-listening.gif" media="(prefers-color-scheme: dark)" />
+							<img src="images/gDotSpeech.gif" alt="Speech animation" width="666" height="270" />
+						</picture>
 					</div>
 				</div>
 
