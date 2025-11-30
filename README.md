@@ -1,8 +1,10 @@
 # Web Speech API Prototype (Vanilla JS)
 
-![Vanilla JS speech interface prototype](captures/speech-prototype-vanilla.gif)
+![Vanilla JS speech interface prototype](_img/google-speech-recognition-light.gif)
 
-This repo now centers on a vanilla JavaScript prototype that mirrors the voice-first experience of Assistant-style apps. Everything runs with static assets—open the folder, serve it locally, and you have a demo-ready build sized for the latest iOS 26 artboard.
+This is a vanilla JavaScript prototype that showcases the [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) ability to mirror the voice-first prototypes. 
+
+Open the folder, serve it locally, and you have a demo-ready build sized for an iPhone 17 Pro-sized artboard.
 
 ### What you’ll learn
 * How to wire the Web Speech API without frameworks
@@ -113,8 +115,6 @@ speechSynthesis.speak(utterance);
 ---
 
 ### References
-* PromptWorks - [Speech Recognition in the Browser](https://www.promptworks.com/blog/speech-recoginition-in-the-browser?utm_source=codropscollective)
 * MDN - [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
 * MDN - [SpeechRecognition Interface](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition)
 * MDN - [SpeechSynthesis Interface](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis)
-* [js2coffee 2.0](http://js2.coffee/)
