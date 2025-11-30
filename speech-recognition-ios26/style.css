@@ -1,0 +1,424 @@
+@font-face {
+	font-display: swap;
+	font-family: "Roboto";
+	font-style: normal;
+	font-weight: 100 900;
+	src: url("fonts/Roboto-VariableFont_wdth,wght.ttf") format("truetype");
+}
+
+@font-face {
+	font-display: swap;
+	font-family: "Noto Sans SC";
+	font-style: normal;
+	font-weight: 100 900;
+	src: url("fonts/NotoSansSC-VariableFont_wght.ttf") format("truetype");
+}
+
+:root {
+	/* iPhone 16 Pro-ish artboard; scale now 1:1 with design pixels */
+	--animation-duration: 0.4s;
+	--bg-color: #fff;
+	--card-bg-color: #fff;
+	--device-bg-color: #f5f5f5;
+	--device-height: 874px;
+	--device-render-height: var(--device-height);
+	--device-render-width: var(--device-width);
+	--device-width: 402px;
+	--fit-scale: 1;
+	--frame-padding: clamp(18px, 4vw, 56px);
+	--halo-color: #fff;
+	--icon-color: #000;
+	--header-icon-size: 24px;
+	--dots-quiet-width: 126px;
+	--dots-speech-width: 117px;
+	--status-filter: none;
+	--scale: 1;
+	--text-color: #000;
+}
+
+/* Avoid any movement on first paint; enable transitions after hydration */
+body:not(.hydrated) *,
+body:not(.hydrated) *::before,
+body:not(.hydrated) *::after {
+	animation: none !important;
+	transition: none !important;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	align-items: center;
+	background: var(--bg-color);
+	color: var(--text-color);
+	display: flex;
+	font-family: "Roboto", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+	justify-content: center;
+	margin: 0;
+	min-height: 100vh;
+	overflow: hidden;
+}
+
+.app {
+	--device-render-height: calc(var(--device-height) * var(--fit-scale));
+	--device-render-width: calc(var(--device-width) * var(--fit-scale));
+	--fit-scale: clamp(
+		0,
+		min(
+			1,
+			(calc(100vw - (var(--frame-padding) * 2)) / var(--device-width)),
+			(calc(100vh - (var(--frame-padding) * 2)) / var(--device-height))
+		),
+		1
+	);
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	min-height: 100vh;
+	padding: var(--frame-padding);
+	width: 100%;
+}
+
+.device {
+	--dots-delay: 0s;
+	--dots-offset: var(--logo-offset);
+	--halo-scale: 0;
+	--header-delay: 0s;
+	--logo-delay: 0s;
+	--logo-offset: calc(-264px * var(--scale));
+	--scale: var(--fit-scale);
+	--text-delay: 0s;
+	background: var(--device-bg-color);
+	box-shadow:
+		0 calc(4px * var(--fit-scale)) calc(6px * var(--fit-scale)) calc(-1px * var(--fit-scale)) rgba(0, 0, 0, 0.12),
+		0 calc(2px * var(--fit-scale)) calc(4px * var(--fit-scale)) calc(-2px * var(--fit-scale)) rgba(0, 0, 0, 0.1);
+	border-radius: 0;
+	height: var(--device-render-height);
+	overflow: hidden;
+	position: relative;
+	width: var(--device-render-width);
+	max-height: var(--device-render-height);
+	max-width: var(--device-render-width);
+}
+
+.layer {
+	inset: 0;
+	pointer-events: none;
+	position: absolute;
+}
+
+.bg {
+	display: block;
+	height: 100%;
+	inset: 0;
+	position: absolute;
+	width: 100%;
+	z-index: 1;
+}
+
+.bg img {
+	display: block;
+	height: 100%;
+	inset: 0;
+	object-fit: cover;
+	position: absolute;
+	width: 100%;
+}
+
+.google-logo {
+	height: auto;
+	left: 50%;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%) translateY(var(--logo-offset));
+	width: calc(128px * var(--scale));
+	transition:
+		opacity var(--animation-duration) ease var(--logo-delay),
+		transform var(--animation-duration) ease var(--logo-delay);
+	will-change: opacity, transform;
+}
+
+.google-logo img {
+	display: block;
+	height: auto;
+	width: 100%;
+}
+
+.google-logo .google-blue {
+	fill: #4285f4;
+}
+.google-logo .google-red {
+	fill: #ea4335;
+}
+.google-logo .google-yellow {
+	fill: #fbbc05;
+}
+.google-logo .google-green {
+	fill: #34a853;
+}
+
+@media (prefers-color-scheme: dark) {
+	.google-logo .google-blue,
+	.google-logo .google-red,
+	.google-logo .google-yellow,
+	.google-logo .google-green {
+		fill: #ffffff;
+	}
+}
+
+.g-dots {
+	background: var(--card-bg-color);
+	border-radius: 999px;
+	left: 50%;
+	opacity: 0;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%) translateY(var(--dots-offset));
+	transition:
+		opacity var(--animation-duration) ease var(--dots-delay),
+		transform var(--animation-duration) ease var(--dots-delay);
+	will-change: opacity, transform;
+	z-index: 6;
+	width: calc(var(--dots-quiet-width) * var(--scale));
+}
+
+.g-dots img,
+.g-dots picture {
+	display: block;
+	width: 100%;
+}
+
+.g-dots img {
+	height: auto;
+}
+
+.g-dots.speech {
+	width: calc(var(--dots-speech-width) * var(--scale));
+}
+
+.g-dots#gDotSpeech {
+	background: transparent;
+	left: 50%;
+	opacity: 0;
+	top: 50%;
+	transform: translate(-50%, -50%) translateY(var(--dots-offset));
+	z-index: 7;
+}
+
+.status-bar {
+	height: auto;
+	object-fit: cover;
+	pointer-events: none;
+	top: 0;
+	width: 100%;
+	z-index: 10;
+	filter: var(--status-filter);
+}
+
+.transcript {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	padding: 0 32px;
+	pointer-events: none;
+	z-index: 8;
+}
+
+.transcript-text {
+	color: var(--text-color);
+	font-size: calc(22px * var(--scale));
+	font-weight: 400;
+	line-height: calc(28px * var(--scale));
+	opacity: 0;
+	position: absolute;
+	text-align: center;
+	top: 25%;
+	transition: opacity 0.1s ease var(--text-delay);
+}
+
+.search-song {
+	inset: auto;
+	bottom: 25%;
+	left: 50%;
+	pointer-events: none;
+	position: absolute;
+	transform: translate(-50%, 0);
+	opacity: 0;
+	transition:
+		opacity var(--animation-duration) ease var(--header-delay),
+		transform var(--animation-duration) ease var(--header-delay);
+	z-index: 6;
+}
+
+.search-song img {
+	display: block;
+	height: auto;
+	width: calc(160px * var(--scale));
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg-color: #272727;
+		--card-bg-color: rgba(255, 255, 255, 0.08);
+		--device-bg-color: #1e1e1e;
+		--halo-color: #1d1d1d;
+		--icon-color: #e9e9e9;
+		--status-filter: invert(1);
+		--text-color: #e9e9e9;
+		--dots-quiet-width: var(--device-width);
+		--dots-speech-width: var(--device-width);
+		color-scheme: light dark;
+	}
+}
+
+.mic-area {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	pointer-events: auto;
+	transition:
+		opacity var(--animation-duration) ease,
+		transform var(--animation-duration) ease;
+	z-index: 5;
+}
+
+.mic-button {
+	transition:
+		opacity var(--animation-duration) ease,
+		transform var(--animation-duration) ease;
+}
+
+.mic-bg {
+	background: var(--halo-color);
+	border-radius: 50%;
+	height: calc(49px * var(--scale));
+	left: 50%;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%) scale(var(--halo-scale));
+	transform-origin: center;
+	transition:
+		opacity var(--animation-duration) ease,
+		transform var(--animation-duration) ease;
+	width: calc(49px * var(--scale));
+}
+
+.mic-button {
+	background: transparent;
+	border: none;
+	border-radius: 40px;
+	cursor: pointer;
+	height: calc(80px * var(--scale));
+	pointer-events: auto;
+	position: absolute;
+	top: calc(230px * var(--scale));
+	width: calc(375px * var(--scale));
+}
+
+.mic-button:disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+
+.header-btn {
+	background: transparent;
+	border: none;
+	color: var(--icon-color);
+	cursor: pointer;
+	opacity: 0;
+	pointer-events: none;
+	position: absolute;
+	top: calc(72px * var(--scale));
+	transition:
+		opacity var(--animation-duration) ease var(--header-delay),
+		transform var(--animation-duration) ease var(--header-delay);
+	will-change: opacity, transform;
+	z-index: 8;
+}
+
+.header-btn img {
+	display: block;
+	height: auto;
+	width: 20px;
+}
+
+.header-btn svg {
+	display: block;
+	height: calc(var(--header-icon-size) * var(--scale));
+	width: calc(var(--header-icon-size) * var(--scale));
+}
+
+.header-btn.close {
+	left: calc(25px * var(--scale));
+}
+
+.header-btn.translate {
+	right: calc(25px * var(--scale));
+}
+
+.google-area {
+	z-index: 6;
+}
+
+.g-dots {
+	z-index: 7;
+}
+
+.device.listening {
+	--dots-delay: 0.04s;
+	--dots-offset: 0px;
+	--halo-scale: 19;
+	--header-delay: 0.2s;
+	--logo-delay: 0.04s;
+	--logo-offset: 0px;
+	--text-delay: 0.2s;
+}
+
+.device.listening .google-logo {
+	opacity: 0;
+}
+
+.device.listening .transcript-text {
+	opacity: 1;
+}
+
+.device.listening #gDots {
+	opacity: 1;
+}
+
+.device.listening #gDotSpeech {
+	opacity: 0;
+}
+
+.device.listening.speaking #gDots {
+	opacity: 0;
+}
+
+.device.listening.speaking #gDotSpeech {
+	opacity: 1;
+}
+
+.device.listening .header-btn {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+
+.device.listening .mic-area {
+	pointer-events: none;
+}
+
+.device.listening .mic-button {
+	opacity: 0;
+	transform: translateY(calc(140px * var(--scale))) scale(0.05);
+}
+
+.device.listening .mic-bg {
+	opacity: 1;
+}
+
+.device.listening .search-song {
+	opacity: 1;
+	transform: translate(-50%, 0);
+}
