@@ -31,7 +31,7 @@
 	--header-icon-size: 24px;
 	--dots-quiet-width: 126px;
 	--dots-speech-width: 117px;
-	--status-filter: none;
+	--system-chrome-color: #000;
 	--scale: 1;
 	--text-color: #000;
 }
@@ -206,14 +206,45 @@ body {
 	z-index: 7;
 }
 
-.status-bar {
-	height: auto;
-	object-fit: cover;
+.status-bar,
+.home-indicator {
+	left: 0;
 	pointer-events: none;
-	top: 0;
+	right: 0;
 	width: 100%;
 	z-index: 10;
-	filter: var(--status-filter);
+}
+
+.status-bar {
+	height: calc(62px * var(--scale));
+	top: 0;
+	bottom: auto;
+}
+
+.status-bar::before {
+	background-color: var(--system-chrome-color);
+	content: "";
+	display: block;
+	height: 100%;
+	mask: url("images/statusBar.svg") center / contain no-repeat;
+	-webkit-mask: url("images/statusBar.svg") center / contain no-repeat;
+	width: 100%;
+}
+
+.home-indicator {
+	bottom: 0;
+	top: auto;
+	height: calc(34px * var(--scale));
+}
+
+.home-indicator::before {
+	background-color: var(--system-chrome-color);
+	content: "";
+	display: block;
+	height: 100%;
+	margin: 0 auto;
+	mask: url("images/homeIndicator.svg") center / contain no-repeat;
+	-webkit-mask: url("images/homeIndicator.svg") center / contain no-repeat;
 }
 
 .transcript {
@@ -230,6 +261,7 @@ body {
 	font-size: calc(22px * var(--scale));
 	font-weight: 400;
 	line-height: calc(28px * var(--scale));
+	margin: 0 32px;
 	opacity: 0;
 	position: absolute;
 	text-align: center;
@@ -264,7 +296,7 @@ body {
 		--device-bg-color: #1e1e1e;
 		--halo-color: #1d1d1d;
 		--icon-color: #e9e9e9;
-		--status-filter: invert(1);
+		--system-chrome-color: #fff;
 		--text-color: #e9e9e9;
 		--dots-quiet-width: var(--device-width);
 		--dots-speech-width: var(--device-width);
